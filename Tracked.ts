@@ -2,9 +2,8 @@ import * as React from 'react';
 import memoize from 'memoizee';
 
 export function trackedMemoize(func: Function, options?: any): Function {
-    const memoized = memoize(func, options);
     let lastArgs: any = [];
-    return (...args) => {
+    return memoize((...args) => {
         detectChangedProperty(
             func.name || func.toString().substring(0, (func.toString().indexOf(')') + 1) || 100),
             lastArgs,
@@ -12,8 +11,8 @@ export function trackedMemoize(func: Function, options?: any): Function {
             'param with index'
         );
         lastArgs = args;
-        return memoized(...args);
-    };
+        return func(...args);
+    }, options);
 }
 
 export function detectChangedProperty<T>(name: string, prev: T, current: T, itemName: string): void {
